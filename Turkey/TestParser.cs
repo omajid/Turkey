@@ -9,13 +9,22 @@ namespace Turkey
 {
     public class TestParser
     {
-        public Task<(bool Success, Test Test)> TryParseAsync(SystemUnderTest system, string nuGetConfig, FileInfo testConfiguration)
+        private SystemUnderTest SystemUnderTest;
+        private string NuGetConfig;
+
+        public Testparser(SystemUnderTest test, string nuGetConfig)
         {
-            var dir = testConfiguration.Directory;
-            return TryParseAsync(system, nuGetConfig, dir, File.ReadAllText(testConfiguration.FullName));
+            this.SystemUnderTest = test;
+            this.NuGetConfig = nuGetConfig;
         }
 
-        public async Task<(bool Success, Test Test)> TryParseAsync(SystemUnderTest system, string nuGetConfig, DirectoryInfo directory, string testConfiguration)
+        public Task<(bool Success, Test Test)> TryParseAsync(FileInfo testConfiguration)
+        {
+            var dir = testConfiguration.Directory;
+            return TryParseAsync(dir, File.ReadAllText(testConfiguration.FullName));
+        }
+
+        public async Task<(bool Success, Test Test)> TryParseAsync(DirectoryInfo directory, string testConfiguration)
         {
             // TODO: async
             var fileName = Path.Combine(directory.FullName, "test.json");
